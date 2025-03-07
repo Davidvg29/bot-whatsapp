@@ -13,7 +13,7 @@ exports.sendMessage = async(req, res) => {
               }
           }      
 
-        axios.post("https://graph.facebook.com/v22.0/569623499570416/messages", data,{
+        await axios.post("https://graph.facebook.com/v22.0/569623499570416/messages", data,{
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

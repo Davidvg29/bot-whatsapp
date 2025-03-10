@@ -1,15 +1,18 @@
-const axios = require("axios")
+const axios = require("axios");
+const parseBody = require("../middlewares/parseBody");
 require('dotenv').config();
 
+const token = process.env.WHATSAPP_TOKEN;
 exports.sendMessage = async(req, res) => {
-    const token = process.env.WHATSAPP_TOKEN;
     try {
+        const body = await parseBody(req)
+        console.log(body)
         const data = {
             "messaging_product": "whatsapp",
             "to": "543813965671",
             "type": "text",
             "text": {
-                  "body": "Hola, este es un mensaje probando la api de whatsapp enviado con Node.js"
+                  "body": body.message
               }
           }      
 

@@ -1,3 +1,4 @@
+const { receiveAndSendTwilio } = require("../controllers/receiveAndSendTwilio");
 const { sendMessage } = require("../controllers/sendMessage");
 const { sendMessageTwilio } = require("../controllers/sendMessageTwilio");
 
@@ -8,9 +9,18 @@ module.exports = (req, res)=>{
             case "/sendTwilio": sendMessageTwilio(req, res); break;
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });
-                res.end("Página no encontrada.");
+                res.end(JSON.stringify("Página no encontrada."));
         }
-    }else{
+    }
+    if(req.method === "POST"){
+        switch (req.url) {
+            case "/receiveAndSendTwilio": receiveAndSendTwilio(req, res); break;
+            default:
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify("Página no encontrada."));
+        }
+    }
+    else{
         res.writeHead(404, {"Content-type": "application/json"})
         res.end("Página no encontrada")
     }

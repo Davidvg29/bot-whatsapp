@@ -12,7 +12,7 @@ exports.sendMessage = async(req, res) => {
             "to": "543813965671",
             "type": "text",
             "text": {
-                  "body": body.message
+                  "body": "body.message"
               }
           }      
 

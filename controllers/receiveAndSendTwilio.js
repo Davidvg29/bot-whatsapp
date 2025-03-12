@@ -9,10 +9,22 @@ exports.receiveAndSendTwilio = async (req, res) => {
     try {
         const body = await parseBody(req);
         console.log(body)
-        const numberToReply = body.Author.substring(9) 
-        const messageToReply = "hola"
-        if(body.Body === "hola"){
-            message = "Hola! ¿En qué puedo ayudarte? somos el equipo de Sociedad Aguas del Tucumán"
+        const numberToReply = body.From.substring(9) 
+        let messageToReply = "hola"
+        if(body.Body === "hola" || body.Body === "Hola" || body.Body === "HOLA" || body.Body === "holaa" || body.Body === "Holaa" || body.Body === "HOLAA"){
+            messageToReply = `¡Hola, *${body.ProfileName}*! 👋  
+Bienvenido/a al sistema de Atención al Cliente de *SAT - Sociedad Aguas del Tucumán* 💧👩🏻‍💼👨🏻‍💼  
+
+Para brindarte una mejor atención, en algunos casos te pediremos tu *código de cliente*.  
+
+Por favor, responde con el número de la opción que mejor describa tu consulta: 🔢  
+
+1️⃣ *Solicitud Técnica*  
+2️⃣ *Solicitud Administrativa*  
+3️⃣ *Consulta de últimas facturas*  
+
+👉 *Escribe solo el número de la opción elegida.*  
+`
         }
         const message = await client.messages.create({
             body: messageToReply,
@@ -28,4 +40,5 @@ exports.receiveAndSendTwilio = async (req, res) => {
         res.end(JSON.stringify({ state: "Unsuccessful", error: error.message }));
     }
 };
+
 

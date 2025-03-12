@@ -12,7 +12,7 @@ module.exports = (req, res)=>{
                 res.end(JSON.stringify("Página no encontrada."));
         }
     }
-    if(req.method === "POST"){
+     else if(req.method === "POST"){
         switch (req.url) {
             case "/receiveAndSendTwilio": receiveAndSendTwilio(req, res); break;
             default:

@@ -51,12 +51,14 @@ exports.crearArchivoRemoto = async (identificacionClienteCodigo) => {
         });
     } catch (error) {
         console.error('❌ Error al crear el archivo:', error);
+        return false
     } finally {
-        if (conn) conn.end(); //cierra conexión
+        if (conn) conn.end();
+        return true
     }
 }
 
-exports.leerArchivoRemotoTest = async (identificacionClienteCodigo) => {
+exports.leerArchivoRemotoTes = async (identificacionClienteCodigo) => {
     let conn;
     let fileContent = ''; // Asegúrate de inicializar fileContent
     try {
@@ -70,7 +72,6 @@ exports.leerArchivoRemotoTest = async (identificacionClienteCodigo) => {
                     reject(err);  // Rechazar si hay error en la ejecución
                     return;
                 }
-
                 // Capturamos la salida estándar (STDOUT)
                 stream.on('data', (data) => {
                     console.log('STDOUT: ' + data);  // Ver qué datos estamos recibiendo
@@ -92,5 +93,108 @@ exports.leerArchivoRemotoTest = async (identificacionClienteCodigo) => {
         return false; // Si ocurre un error, retornamos false
     } finally {
         if (conn) conn.end(); // Cerramos la conexión SSH
+        console.log(fileContent)
+        // Verificar el contenido del archivo
+        if (fileContent.trim() == "0000") {
+            return true;
+        } else if (fileContent.trim() == "0001") {
+            return '0001'; // Sin información
+        } else {
+            return false; // Error interno o respuesta inesperada
+        }
+    }
+};
+
+exports.leerArchivoRemotoTxt = async (identificacionClienteCodigo) => {
+    let conn;
+    let fileContent = ''; // Asegúrate de inicializar fileContent
+    try {
+        let command = `cat /Respuesta/res_facturas_vigentes${identificacionClienteCodigo}.txt`;
+        conn = await exports.connectSSH();
+        // Usamos la promesa para manejar la ejecución del comando SSH
+        await new Promise((resolve, reject) => {
+            conn.exec(command, (err, stream) => {
+                if (err) {
+                    reject(err);  // Rechazar si hay error en la ejecución
+                    return;
+                }
+                // Capturamos la salida estándar (STDOUT)
+                stream.on('data', (data) => {
+                    console.log('STDOUT: ' + data);  // Ver qué datos estamos recibiendo
+                    fileContent = data.toString().split(/\s+/);
+                });
+                // Al cerrar el flujo, resolvemos la promesa
+                stream.on('close', (code) => {
+                    console.log(`✅ Archivo leído con éxito`);
+                    resolve();  // Resolvemos la promesa
+                });
+                // Capturamos los errores (STDERR)
+                stream.stderr.on('data', (data) => {
+                    console.error('STDERR: ' + data);
+                });
+            });
+        });
+    } catch (error) {
+        console.error('❌ Error al leer el archivo:', error);
+        return false; // Si ocurre un error, retornamos false
+    } finally {
+        if (conn) conn.end(); // Cerramos la conexión SSH
+        console.log(fileContent)
+        return fileContent
+    }
+};
+
+exports.getFacturasVigentesSAT = async (numFactura) => {
+    const fs = require("fs");
+    const path = require("path");
+    let conn;
+    let namePDF;
+
+    try {
+        conn = await exports.connectSSH();
+        namePDF = `/Respuesta/res_facturas_vigentes${numFactura}.pdf`;
+
+        // Ruta local donde se guardará el archivo
+        const localFolderPath = path.join(__dirname, "../cache");
+        const localFilePath = path.join(localFolderPath, `res_facturas_vigentes${numFactura}.pdf`);
+
+        // Asegurarse de que la carpeta local existe
+        if (!fs.existsSync(localFolderPath)) {
+            fs.mkdirSync(localFolderPath, { recursive: true });
+        }
+
+        // Usar 'exec' para ejecutar el comando remoto
+        conn.exec(`cat ${namePDF}`, (err, stream) => {
+            if (err) {
+                console.error('❌ Error al ejecutar comando remoto:', err);
+                conn.end();
+                return;
+            }
+
+            // Crear un buffer para almacenar los datos binarios
+            let fileData = Buffer.alloc(0);
+
+            stream.on('data', (chunk) => {
+                // Concatenar los fragmentos binarios correctamente
+                fileData = Buffer.concat([fileData, chunk]);
+                // console.log('Recibiendo chunk:', chunk);  // Mostrar el chunk binario
+            });
+
+            stream.on('close', () => {
+                // Guardar el contenido binario directamente en el archivo local
+                fs.writeFile(localFilePath, fileData, (err) => {
+                    if (err) {
+                        console.error('❌ Error al guardar el archivo localmente:', err);
+                    } else {
+                        console.log(`✅ Archivo descargado con éxito: ${localFilePath}`);
+                    }
+                });
+                conn.end();
+            });
+        });
+
+    } catch (error) {
+        console.error('❌ Error al obtener archivo PDF:', error);
+        return false;
     }
 };

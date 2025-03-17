@@ -6,9 +6,7 @@ const {crearArchivoRemoto, leerArchivoRemotoTes, getFacturasVigentesSAT, leerArc
 module.exports = async (req, res)=>{
     if(req.method === "GET"){
         switch (req.url) {
-            case "/a": getFacturasVigentesSAT("001031392805"); break;
             case "/sendTwilio": sendMessageTwilio(req, res); break;
-            case "/cache": getPdf(req, res); break;
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });
                 res.end(JSON.stringify("Página no encontrada."));
@@ -16,6 +14,7 @@ module.exports = async (req, res)=>{
     }
      else if(req.method === "POST"){
         switch (req.url) {
+            case "/cache": getPdf(req, res); break;
             case "/receiveAndSendTwilio": receiveAndSendTwilio(req, res); break;
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });

@@ -45,20 +45,20 @@ Por favor, responde con el número de la opción que mejor describa tu consulta:
                     await getFacturasVigentesSAT(txt[i].substring(16, 28))
                 }
             }
-            // for (let i = 0; i < arrayNumFactura.length; i++) {
-            //     const message = await client.messages.create({
-            //         body: messageToReply,
-            //         from: 'whatsapp:+14155238886',
-            //         mediaUrl: `https://e510-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes${arrayNumFactura[i]}.pdf`,
-            //         to: `whatsapp:${numberToReply}`
-            //     });
-                
-            // }
+            for (let i = 0; i < arrayNumFactura.length; i++) {
+                const message = await client.messages.create({
+                    body: `Factura ${arrayNumFactura[i]}`,
+                    from: 'whatsapp:+14155238886',
+                    mediaUrl: `https://e510-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes${arrayNumFactura[i]}.pdf`,
+                    to: `whatsapp:${numberToReply}`
+                });
+                console.log(message)
+            }
         }
         const message = await client.messages.create({
             body: messageToReply,
             from: 'whatsapp:+14155238886',
-            mediaUrl: "https://e510-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes001031106082.pdf",
+            // mediaUrl: "https://e510-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes001031106082.pdf",
             to: `whatsapp:${numberToReply}`
         });
         res.writeHead(200, { "Content-Type": "application/json" });

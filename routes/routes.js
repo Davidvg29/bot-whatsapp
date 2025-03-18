@@ -1,4 +1,4 @@
-const { getPdf } = require("../controllers/getPdf");
+const { returnPdf } = require("../controllers/returnPdf");
 const { receiveAndSendTwilio } = require("../controllers/receiveAndSendTwilio");
 const { sendMessageTwilio } = require("../controllers/sendMessageTwilio");
 const {crearArchivoRemoto, leerArchivoRemotoTes, getFacturasVigentesSAT, leerArchivoRemotoTxt} = require("../middlewares/funcionesAccesoRemoto")
@@ -14,7 +14,7 @@ module.exports = async (req, res)=>{
     }
      else if(req.method === "POST"){
         switch (req.url) {
-            case "/cache": getPdf(req, res); break;
+            case "/pdf": returnPdf(req, res); break;
             case "/receiveAndSendTwilio": receiveAndSendTwilio(req, res); break;
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });

@@ -1,4 +1,5 @@
 const { Client } = require('ssh2');
+require("dotenv").config();
 
 exports.connectSSH = async () => {
     try {
@@ -11,10 +12,10 @@ exports.connectSSH = async () => {
                 console.error('❌ Error de conexión SSH:', err);
                 reject(err);
             }).connect({
-                host: '150.150.150.13', 
-                port: 22, 
-                username: 'lucas_test', 
-                password: 'Test2024' 
+                host: process.env.SSH_HOST, 
+                port: process.env.SSH.PORT, 
+                username: process.env.SSH_USER, 
+                password: process.env.SSH_PASS 
             });
         });
     } catch (error) {

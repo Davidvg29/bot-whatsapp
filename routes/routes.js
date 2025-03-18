@@ -6,6 +6,7 @@ const {crearArchivoRemoto, leerArchivoRemotoTes, getFacturasVigentesSAT, leerArc
 module.exports = async (req, res)=>{
     if(req.method === "GET"){
         switch (req.url) {
+            case "/a": leerArchivoRemotoTes("19225412"); break;
             case "/sendTwilio": sendMessageTwilio(req, res); break;
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });

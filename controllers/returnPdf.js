@@ -2,6 +2,7 @@ const parseBody = require("../middlewares/parseBody");
 const fs = require("fs");
 const path = require("path");
 
+//devuelve pdf de cada factura y recibe por body numeroFactura
 exports.returnPdf = async (req, res) => {
     try {
         const {numeroFactura} = await parseBody(req);

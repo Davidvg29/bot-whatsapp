@@ -13,7 +13,7 @@ exports.connectSSH = async () => {
                 reject(err);
             }).connect({
                 host: process.env.SSH_HOST, 
-                port: process.env.SSH.PORT, 
+                port: process.env.SSH_PORT, 
                 username: process.env.SSH_USER, 
                 password: process.env.SSH_PASS 
             });
@@ -122,7 +122,8 @@ exports.leerArchivoRemotoTxt = async (identificacionClienteCodigo) => {
                 // Capturamos la salida estándar (STDOUT)
                 stream.on('data', (data) => {
                     console.log('STDOUT: ' + data);  // Ver qué datos estamos recibiendo
-                    fileContent = data.toString().split(/\s+/);
+                    fileContent += data.toString().split("/\s+/");
+                    fileContent = fileContent.split("\n");
                 });
                 // Al cerrar el flujo, resolvemos la promesa
                 stream.on('close', (code) => {
@@ -141,11 +142,12 @@ exports.leerArchivoRemotoTxt = async (identificacionClienteCodigo) => {
     } finally {
         if (conn) conn.end(); // Cerramos la conexión SSH
         console.log(fileContent)
-        return fileContent
+        return fileContent;
     }
 };
 
 exports.getFacturasVigentesSAT = async (numFactura) => {
+    // guarda el pdf en el directorio cache
     const fs = require("fs");
     const path = require("path");
     let conn;

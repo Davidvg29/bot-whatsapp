@@ -2,6 +2,7 @@ const { returnPdf } = require("../controllers/returnPdf");
 const { receiveAndSendTwilio } = require("../controllers/receiveAndSendTwilio");
 const { sendMessageTwilio } = require("../controllers/sendMessageTwilio");
 const {crearArchivoRemoto, leerArchivoRemotoTes, getFacturasVigentesSAT, leerArchivoRemotoTxt} = require("../middlewares/funcionesAccesoRemoto");
+const { readFacturaPDF } = require("../controllers/readFacturaPDF");
 
 module.exports = async (req, res) => {
     if (req.method === "GET") {
@@ -31,6 +32,9 @@ module.exports = async (req, res) => {
             case "/receiveAndSendTwilio":
                 receiveAndSendTwilio(req, res);
                 break;
+            case "/pdf/read":
+                readFacturaPDF(req, res);
+                break
             default:
                 res.writeHead(404, { "Content-Type": "application/json" });
                 res.end(JSON.stringify("Página no encontrada."));

@@ -65,30 +65,34 @@ exports.leerArchivoRemotoTes = async (identificacionClienteCodigo) => {
     try {
         let command = `cat /Respuesta/res_facturas_vigentes${identificacionClienteCodigo}.tes`;
         conn = await exports.connectSSH();
-        
+
         // Usamos la promesa para manejar la ejecución del comando SSH
-        await new Promise((resolve, reject) => {
-            conn.exec(command, (err, stream) => {
-                if (err) {
-                    reject(err);  // Rechazar si hay error en la ejecución
-                    return;
-                }
-                // Capturamos la salida estándar (STDOUT)
-                stream.on('data', (data) => {
-                    console.log('STDOUT: ' + data);  // Ver qué datos estamos recibiendo
-                    fileContent += data.toString();
-                });
-                // Al cerrar el flujo, resolvemos la promesa
-                stream.on('close', (code) => {
-                    console.log(`✅ Archivo leído con éxito`);
-                    resolve();  // Resolvemos la promesa
-                });
-                // Capturamos los errores (STDERR)
-                stream.stderr.on('data', (data) => {
-                    console.error('STDERR: ' + data);
+        let exist = true
+        do {
+            await new Promise((resolve, reject) => {
+                conn.exec(command, (err, stream) => {
+                    if (err) {
+                        reject(err);  // Rechazar si hay error en la ejecución
+                        return;
+                    }
+                    // Capturamos la salida estándar (STDOUT)
+                    stream.on('data', (data) => {
+                        console.log('STDOUT: ' + data);  // Ver qué datos estamos recibiendo
+                        fileContent += data.toString();
+                        exist=false
+                    });
+                    // Al cerrar el flujo, resolvemos la promesa
+                    stream.on('close', (code) => {
+                        console.log(`✅ Archivo leído con éxito`);
+                        resolve();  // Resolvemos la promesa
+                    });
+                    // Capturamos los errores (STDERR)
+                    stream.stderr.on('data', (data) => {
+                        console.error('STDERR: ' + data);
+                    });
                 });
             });
-        });
+        } while (exist);
     } catch (error) {
         console.error('❌ Error al leer el archivo:', error);
         return false; // Si ocurre un error, retornamos false

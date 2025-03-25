@@ -11,7 +11,7 @@ exports.receiveAndSendTwilio = async (req, res) => {
         const body = await parseBody(req);
         console.log(body)
         const numberToReply = body.From.substring(9) 
-        let messageToReply = "hola"
+        let messageToReply = "Hola"
         if(body.Body === "hola" || body.Body === "Hola" || body.Body === "HOLA" || body.Body === "holaa" || body.Body === "Holaa" || body.Body === "HOLAA"){
             messageToReply = `¡Hola, *${body.ProfileName}*! 👋  
 Bienvenido/a al sistema de Atención al Cliente de *SAT - Sociedad Aguas del Tucumán* 💧👩🏻‍💼👨🏻‍💼  
@@ -49,11 +49,12 @@ Por favor, responde con el número de la opción que mejor describa tu consulta:
                 const message = await client.messages.create({
                     body: `Factura ${arrayNumFactura[i]}`,
                     from: 'whatsapp:+14155238886',
-                    mediaUrl: `https://e510-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes${arrayNumFactura[i]}.pdf`,
+                    mediaUrl: `https://6020-181-10-202-251.ngrok-free.app/cache/res_facturas_vigentes${arrayNumFactura[i]}.pdf`,
                     to: `whatsapp:${numberToReply}`
                 });
                 console.log(message)
             }
+            messageToReply = "Enviando facturas vigentes..."
         }
         const message = await client.messages.create({
             body: messageToReply,

@@ -2,10 +2,11 @@ const fs = require("fs")
 const parseBody = require("../middlewares/parseBody")
 
 const pdfjsLib = require("pdfjs-dist");
+const { generatedQr } = require("../middlewares/generatedQr");
 //const pdfjsLib = require("pdfjs-dist/legacy/build/pdf");
 
 
-exports. readFacturaPDF = async (req, res) => {
+exports.readFacturaPDF = async (req, res) => {
     const body = await parseBody(req)
     console.log("body: ", body)
 
@@ -53,16 +54,18 @@ lineas.forEach(linea => {
 
     console.log(data)
     let dataServible = []
+    dataServible.push(data[10])
     dataServible.push(data[11])
     dataServible.push(data[12])
     dataServible.push(data[13])
     dataServible.push(data[14])
-    dataServible.push(data[15])
+    dataServible.push(data[17])
     dataServible.push(data[18])
-    dataServible.push(data[19])
-    dataServible.push(data[21])
+    dataServible.push(data[20])
 
     console.log(dataServible)
+
+    generatedQr(dataServible[2])
 
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ state: "Success" }));
